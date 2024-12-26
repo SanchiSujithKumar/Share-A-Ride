@@ -1,6 +1,7 @@
 const Ride = require('../models/Ride');
 const EventEmitter = require('events');
 const changeEmitter = new EventEmitter();
+const { sendMail } = require('./mailCtrl');
 
 changeEmitter.setMaxListeners(100);
 
@@ -47,6 +48,7 @@ const createRide = async (req, res) => {
         await ride.save();
         changeEmitter.emit("ridesChanged");
         res.json({ success: true });
+        sendMail(req.session.user.email);
     }
     catch (err) {
         res.json({ success: false, message: 'Ride creation failed' });
